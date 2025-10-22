@@ -1,239 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta
-      name="description"
-      content="A fun free-to-play arcade game. Test yourself in the wallhack test."
-    />
-    <title>Wally Quack - Small Arcade Game</title>
+<style>
+  :root {
+    --bg: #1a1a1a;
+    --accent: #00aaff;
+    --text: #ffffff;
+    --game-bg: #000000;
+  }
 
-    <!-- optional analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-V917VZVWFL"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-V917VZVWFL");
-    </script>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
 
-    <style>
-      :root {
-        --bg: #1a1a1a;
-        --accent: #00aaff;
-        --text: #ffffff;
-        --game-bg: #000000;
-      }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 
-      html, body {
-        height: 100%;
-        margin: 0;
-      }
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-      body {
-        background: var(--bg);
-        color: var(--text);
-        font-family: Arial, sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
+  /* ✅ główny wrapper: używa 100dvh zamiast 100vh, żeby uwzględniać UI paski mobilne */
+  .page {
+    width: 100%;
+    max-width: 1200px;
+    height: 100dvh; /* <- dynamic viewport height */
+    box-sizing: border-box;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+  .controls {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 20;
+    flex-shrink: 0;
+  }
 
-      /* page wrapper: ogranicza szerokość na dużych ekranach i zajmuje cały viewport wysokości */
-      .page {
-        width: 100%;
-        max-width: 1200px;
-        height: 100vh;
-        box-sizing: border-box;
-        padding: 12px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+  .start-button {
+    font-size: 1rem;
+    padding: 10px 18px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
 
-      /* kontrolki (przycisk) */
-      .controls {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-        margin-bottom: 8px;
-        z-index: 20;
-      }
+  main {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
 
-      .start-button {
-        font-size: 1rem;
-        padding: 10px 18px;
-        background: var(--accent);
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-      }
+  .game-container {
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+  }
 
-      /* main -> obszar gry między przyciskiem a stopką; flex:1 by dokładnie wypełnić dostępną wysokość */
-      main {
-        width: 100%;
-        flex: 1 1 auto;
-        min-height: 0; /* konieczne dla poprawnej współpracy flex children z overflow */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+  .game-inner {
+    height: 100%;
+    aspect-ratio: 1 / 2;
+    max-width: 100%;
+    max-height: 100%;
+    position: relative;
+    background: var(--game-bg);
+    border-radius: 8px;
+  }
 
-      /* .game-container - wrapper, ustawiamy overflow hidden i centrowanie */
-      .game-container {
-        width: 100%;
-        height: 100%;
-        display: none; /* pojawia się po kliknięciu Start */
-        align-items: center;
-        justify-content: center;
-        box-sizing: border-box;
-        overflow: hidden;
-      }
+  .game-inner iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    display: block;
+  }
 
-      /* .game-inner trzyma właściwy aspect ratio: szerokość = 1/2 wysokości
-         (aspect-ratio: 1/2 => width / height = 1/2 = 0.5)
-         Wysokość bierze 100% z rodzica (czyli z main -> flex), a szerokość liczy się z aspect-ratio */
-      .game-inner {
-        height: 100%;
-        aspect-ratio: 1 / 2; /* szerokość = 0.5 * height */
-        max-width: 100%;
-        max-height: 100%;
-        position: relative;
-        background: var(--game-bg);
-      }
+  footer.game-footer {
+    font-size: 0.9rem;
+    text-align: center;
+    color: var(--text);
+    padding: 4px 10px 8px;
+    flex-shrink: 0;
+  }
 
-      .game-inner iframe {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-        display: block;
-      }
+  footer.game-footer a {
+    color: var(--accent);
+    text-decoration: none;
+  }
 
-      footer.game-footer {
-        margin-top: 10px;
-        font-size: 0.95rem;
-        text-align: center;
-        color: var(--text);
-        padding: 6px 10px;
-      }
+  /* 📱 Mobile adjustments */
+  @media (max-width: 900px) {
+    .page {
+      padding: 6px 8px 10px;
+    }
 
-      footer.game-footer a {
-        color: var(--accent);
-        text-decoration: none;
-      }
+    .start-button {
+      padding: 12px 22px;
+      font-size: 1.05rem;
+    }
 
-      /* MOBILE adjustments: na mniejszych ekranach chcemy, żeby kontener nie był zbyt duży */
-      @media (max-width: 900px) {
-        .page { padding: 8px; }
-        .start-button { padding: 12px 20px; font-size: 1.05rem; }
-        /* dla mobile możemy chcieć, żeby .game-inner zajmowało więcej szerokości */
-        .game-inner {
-          /* na mobile pozwól szerokości być większą ograniczoną szerokością ekranu */
-          max-width: calc(100vh * 0.5); /* zapobiega przekroczeniu szerokości (opcjonalne) */
-        }
-      }
-    </style>
-  </head>
-
-  <body>
-    <div class="page">
-      <div class="controls">
-        <button id="startBtn" class="start-button">Start Game</button>
-      </div>
-
-      <main>
-        <!-- Desktop container: BEZ allowfullscreen, z sandbox (zabrania fullscreen z iframe) -->
-        <div id="desktopGame" class="game-container desktop" aria-hidden="true">
-          <div class="game-inner">
-            <!-- sandbox pozwala skryptom i zachowaniu same-origin, ale bez allowfullscreen -->
-            <iframe
-              id="desktopIframe"
-              src="./game-desktop.html"
-              sandbox="allow-scripts allow-same-origin"
-              title="Wally Quack (desktop)"
-            ></iframe>
-          </div>
-        </div>
-
-        <!-- Mobile container: MA allowfullscreen, aby umożliwić fullscreen na mobile -->
-        <div id="mobileGame" class="game-container mobile" aria-hidden="true">
-          <div class="game-inner">
-            <iframe
-              id="mobileIframe"
-              src="./mobile/game.html"
-              allowfullscreen
-              title="Wally Quack (mobile)"
-            ></iframe>
-          </div>
-        </div>
-      </main>
-
-      <footer class="game-footer">
-        I hope, You will hate my game. Created by
-        <a href="https://x.com/AgilityHorse" target="_blank" rel="noopener noreferrer">@AgilityHorse</a>
-      </footer>
-    </div>
-
-    <script>
-      (function () {
-        const startBtn = document.getElementById('startBtn');
-        const desktopGame = document.getElementById('desktopGame');
-        const mobileGame = document.getElementById('mobileGame');
-
-        function isMobileLike() {
-          return window.innerWidth <= 900;
-        }
-
-        startBtn.addEventListener('click', async () => {
-          // ukryj przycisk
-          startBtn.style.display = 'none';
-
-          if (isMobileLike()) {
-            // pokaz mobilny i spróbuj fullscreen (iframe ma allowfullscreen)
-            mobileGame.style.display = 'flex';
-            mobileGame.setAttribute('aria-hidden', 'false');
-
-            try {
-              if (mobileGame.requestFullscreen) {
-                await mobileGame.requestFullscreen();
-              } else if (mobileGame.webkitRequestFullscreen) {
-                await mobileGame.webkitRequestFullscreen();
-              } else if (mobileGame.msRequestFullscreen) {
-                await mobileGame.msRequestFullscreen();
-              }
-            } catch (e) {
-              console.warn('Fullscreen request failed or denied:', e);
-            }
-          } else {
-            // desktop: pokaż grę w kontenerze, bez fullscreen; iframe nie posiada uprawnień do fullscreen
-            desktopGame.style.display = 'flex';
-            desktopGame.setAttribute('aria-hidden', 'false');
-          }
-        });
-
-        // Po wyjściu z fullscreen na mobile — przywróć przycisk i ukryj mobile container (opcjonalnie)
-        document.addEventListener('fullscreenchange', () => {
-          if (!document.fullscreenElement) {
-            // użytkownik wyszedł z fullscreen
-            // pokaż ponownie przycisk, ukryj mobile game
-            startBtn.style.display = '';
-            mobileGame.style.display = 'none';
-            mobileGame.setAttribute('aria-hidden', 'true');
-          }
-        });
-      })();
-    </script>
-  </body>
-</html>
+    .game-inner {
+      aspect-ratio: 9 / 16; /* lepiej pasuje do ekranów telefonów */
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+    }
+  }
+</style>
