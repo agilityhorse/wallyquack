@@ -24,7 +24,7 @@
         --accent: #00aaff;
         --text: #ffffff;
         --game-bg: #000000;
-        --vh: 1vh; /* JS fix fallback */
+        --vh: 1vh; /* zostanie ustawione dynamicznie w JS */
       }
 
       html, body {
@@ -117,7 +117,7 @@
         font-size: 0.9rem;
         text-align: center;
         color: var(--text);
-        padding: 6px 10px 8px;
+        padding: 6px 10px calc(env(safe-area-inset-bottom, 10px) + 6px);
         flex-shrink: 0;
       }
 
@@ -183,55 +183,67 @@
       </footer>
     </div>
 
+    <!-- ✅ dynamiczny fix dla wysokości viewportu na mobilnych -->
     <script>
-(function () {
-  const startBtn = document.getElementById("startBtn");
-  const desktopGame = document.getElementById("desktopGame");
-  const mobileGame = document.getElementById("mobileGame");
-
-  function isMobileLike() {
-    return window.innerWidth <= 900;
-  }
-
-  startBtn.addEventListener("click", async () => {
-    // 📊 Zlicz kliknięcie w GA4
-    gtag('event', 'start_game_click', {
-      event_category: 'Game',
-      event_label: 'Start Button',
-      value: 1
-    });
-
-    startBtn.style.display = "none";
-
-    if (isMobileLike()) {
-      mobileGame.style.display = "flex";
-      mobileGame.setAttribute("aria-hidden", "false");
-
-      try {
-        if (mobileGame.requestFullscreen) {
-          await mobileGame.requestFullscreen();
-        } else if (mobileGame.webkitRequestFullscreen) {
-          await mobileGame.webkitRequestFullscreen();
-        } else if (mobileGame.msRequestFullscreen) {
-          await mobileGame.msRequestFullscreen();
-        }
-      } catch (e) {
-        console.warn("Fullscreen request failed or denied:", e);
+      function setVh() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty('--vh', `${vh}px`);
       }
-    } else {
-      desktopGame.style.display = "flex";
-      desktopGame.setAttribute("aria-hidden", "false");
-    }
-  });
+      setVh();
+      window.addEventListener('resize', setVh);
+      window.addEventListener('orientationchange', setVh);
+    </script>
 
-  document.addEventListener("fullscreenchange", () => {
-    if (!document.fullscreenElement) {
-      startBtn.style.display = "";
-      mobileGame.style.display = "none";
-      mobileGame.setAttribute("aria-hidden", "true");
-    }
-  });
-})();
-</script>
+    <!-- 🎮 główny skrypt gry -->
+    <script>
+      (function () {
+        const startBtn = document.getElementById("startBtn");
+        const desktopGame = document.getElementById("desktopGame");
+        const mobileGame = document.getElementById("mobileGame");
+
+        function isMobileLike() {
+          return window.innerWidth <= 900;
+        }
+
+        startBtn.addEventListener("click", async () => {
+          // 📊 Zlicz kliknięcie w GA4
+          gtag('event', 'start_game_click', {
+            event_category: 'Game',
+            event_label: 'Start Button',
+            value: 1
+          });
+
+          startBtn.style.display = "none";
+
+          if (isMobileLike()) {
+            mobileGame.style.display = "flex";
+            mobileGame.setAttribute("aria-hidden", "false");
+
+            try {
+              if (mobileGame.requestFullscreen) {
+                await mobileGame.requestFullscreen();
+              } else if (mobileGame.webkitRequestFullscreen) {
+                await mobileGame.webkitRequestFullscreen();
+              } else if (mobileGame.msRequestFullscreen) {
+                await mobileGame.msRequestFullscreen();
+              }
+            } catch (e) {
+              console.warn("Fullscreen request failed or denied:", e);
+            }
+          } else {
+            desktopGame.style.display = "flex";
+            desktopGame.setAttribute("aria-hidden", "false");
+          }
+        });
+
+        document.addEventListener("fullscreenchange", () => {
+          if (!document.fullscreenElement) {
+            startBtn.style.display = "";
+            mobileGame.style.display = "none";
+            mobileGame.setAttribute("aria-hidden", "true");
+          }
+        });
+      })();
+    </script>
   </body>
 </html>
