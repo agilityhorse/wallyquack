@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Wall Quack - Hard mode game</title>
+    <title>Wall Quack – Charity</title>
+
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
@@ -26,42 +27,40 @@
         margin-bottom: 30px;
       }
 
-      .article {
-        width: 100%;
-        max-width: 320px;
+      #counter {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        background: rgba(255, 255, 255, 0.05);
-        padding: 10px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-      }
-
-      .article img {
-        width: 82px;
-        height: 82px;
-        border-radius: 8px;
-        object-fit: cover;
-      }
-
-      .article-text {
-        flex: 1;
-        margin-right: 15px;
-      }
-
-      h3 {
-        font-size: 12px;
-        letter-spacing: 1px;
-        text-transform: uppercase;
+        gap: 6px;
+        margin-bottom: 20px;
+        font-size: 11px;
         color: #fec24d;
       }
 
-      p {
+      #counter img {
+        width: 20px;
+        height: 20px;
+      }
+
+      .image-box {
+        width: 316px;
+        height: 105px;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 15px;
+        background: #0f1111;
+      }
+
+      .image-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      p.description {
         font-family: Arial, sans-serif;
         font-size: 11px;
         line-height: 1.4;
-        color: #e6e6e6;
+        margin-bottom: 20px;
       }
 
       .btn {
@@ -72,29 +71,33 @@
         font-weight: bold;
         font-size: 16px;
         text-decoration: none;
-        margin: 25px 0 8px 0;
+        margin: 15px 0 10px 0;
         display: inline-block;
-        max-width: 320px;
         cursor: pointer;
+        text-align: center;
+      }
+
+      .back-link {
+        color: #fec24d;
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        text-decoration: none;
+        margin-bottom: 20px;
+        display: inline-block;
       }
 
       .footer {
         margin-top: 20px;
         font-size: 11px;
         font-family: Arial, sans-serif;
-        color: #e6e6e6;
-      }
-
-      .footer a {
-        color: #fec24d;
-        text-decoration: none;
+        text-align: center;
       }
 
       /* GAME SCREEN */
       #game-screen {
         display: none;
         width: 320px;
-        height: 640px; /* portrait 1:2 */
+        height: 640px;
         background: black;
         position: relative;
       }
@@ -117,71 +120,41 @@
         cursor: pointer;
         z-index: 20;
       }
-      .read-more-link {
-        color: #fec24d !important;
-        text-decoration: none;
-        cursor: pointer;
-      }
-      .read-more-link:hover {
-        text-decoration: underline;
-      }
     </style>
   </head>
+
   <body>
-    <img src="images/logo.png" alt="Logo" class="logo" />
-
-    <div
-      id="counter"
-      style="
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 20px;
-        font-family: 'Press Start 2P', monospace;
-        font-size: 11px;
-        color: #fec24d;
-      "
-    >
-      <img src="images/coin.png" width="20" height="20" alt="coin" />
-      <span id="counter-value">0/50 $</span>
-    </div>
-
-    <!-- MAIN CONTENT -->
     <div id="main-content">
-      <div class="article">
-        <div class="article-text">
-          <h3>Wally Quack</h3>
-          <p>Duck Hitman. Intentionally shooting through a wall.</p>
-        </div>
-        <img src="images/obrazek2.png" alt="Obrazek 1" />
+      <img src="images/logo.png" alt="Logo" class="logo" />
+
+      <div id="counter">
+        <img src="images/coin.png" alt="coin" />
+        <span id="counter-value">0/50 $</span>
       </div>
 
-      <div class="article">
-        <div class="article-text">
-          <h3>Defeat Enemies</h3>
-          <p>Just 10 enemies. How hard can it be?</p>
-        </div>
-        <img src="images/obrazek1.png" alt="Obrazek 2" />
+      <div class="image-box">
+        <img src="images/donation-image.png" alt="Charity banner" />
       </div>
 
-      <div class="article">
-        <div class="article-text">
-          <h3>Win One Dollar</h3>
-          <p>
-            Every win in the game is converted into $1 for charity.
-            <a href="charity.html" class="read-more-link" target="_blank"
-              >Read More</a
-            >
-          </p>
-        </div>
-        <img src="images/obrazek3.png" alt="Obrazek 3" />
-      </div>
+      <p class="description">
+        The game <strong>Wally Quack</strong> combines entertainment with
+        helping the needy. <br /><br />
+        Every "game win" is a one dollar gifted to
+        <strong>International Bird Rescue</strong>, a foundation that take care
+        of ducks.
+      </p>
 
       <div class="btn" id="play-btn">TAKE A CHALLENGE</div>
 
+      <a href="index.html" class="back-link">← Back to Home</a>
+
       <div class="footer">
-        I hope, you will hate my game.
-        <a href="https://x.com/AgilityHorse">Agility Horse</a>
+        I hope you will hate my game.<br />
+        <a href="https://x.com/AgilityHorse" target="_blank">Agility Horse</a>
+        &nbsp;•&nbsp;
+        <a href="https://www.birdrescue.org" target="_blank">
+          International Bird Rescue
+        </a>
       </div>
     </div>
 
@@ -195,8 +168,6 @@
     </div>
 
     <script>
-      /* --- SUPABASE COUNTER --- */
-
       const SUPABASE_URL = "https://uolddxujywmgixfsruan.supabase.co";
       const SUPABASE_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvbGRkeHVqeXdtZ2l4ZnNydWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODg0MDgsImV4cCI6MjA3ODc2NDQwOH0._vD1dj34aSdArobcYB9cDsgG8wpHve27FYHS7pyjtgc";
@@ -229,8 +200,7 @@
 
       loadCoins();
 
-      /* --- SHOW GAME WHEN BUTTON CLICKED --- */
-
+      /* SHOW GAME ON THIS PAGE */
       const playBtn = document.getElementById("play-btn");
       const mainContent = document.getElementById("main-content");
       const gameScreen = document.getElementById("game-screen");
