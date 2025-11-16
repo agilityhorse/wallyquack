@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wall Quack - Hard mode game</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+      body {
+        margin: 0;
+        font-family: "Press Start 2P", monospace;
+        background: #171a1a;
+        color: #e6e6e6;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px;
+        max-width: 320px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .logo {
+        max-width: 200px;
+        margin-bottom: 30px;
+      }
+
+      .article {
+        width: 100%;
+        max-width: 320px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 12px;
+      }
+
+      .article img {
+        width: 82px;
+        height: 82px;
+        border-radius: 8px;
+        object-fit: cover;
+      }
+
+      .article-text {
+        flex: 1;
+        margin-right: 15px;
+      }
+
+      h3 {
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #fec24d;
+      }
+
+      p {
+        font-family: Arial, sans-serif;
+        font-size: 11px;
+        line-height: 1.4;
+        color: #e6e6e6;
+      }
+
+      .btn {
+        background: #fec24d;
+        color: #7e17e6;
+        padding: 12px 20px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 16px;
+        text-decoration: none;
+        margin: 25px 0 8px 0;
+        display: inline-block;
+        max-width: 320px;
+        cursor: pointer;
+      }
+
+      .footer {
+        margin-top: 20px;
+        font-size: 11px;
+        font-family: Arial, sans-serif;
+        color: #e6e6e6;
+      }
+
+      .footer a {
+        color: #fec24d;
+        text-decoration: none;
+      }
+
+      /* GAME SCREEN */
+      #game-screen {
+        display: none;
+        width: 320px;
+        height: 640px; /* portrait 1:2 */
+        background: black;
+        position: relative;
+      }
+
+      #game-screen iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+
+      #back-btn {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: #fec24d;
+        color: #7e17e6;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 10px;
+        cursor: pointer;
+        z-index: 20;
+      }
+    </style>
+  </head>
+  <body>
+    <img src="images/logo.png" alt="Logo" class="logo" />
+
+    <div
+      id="counter"
+      style="
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 20px;
+        font-family: 'Press Start 2P', monospace;
+        font-size: 11px;
+        color: #fec24d;
+      "
+    >
+      <img src="images/coin.png" width="20" height="20" alt="coin" />
+      <span id="counter-value">0/50 $</span>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content">
+      <div class="article">
+        <div class="article-text">
+          <h3>Wally Quack</h3>
+          <p>Duck Hitman. Intentionally shooting through a wall.</p>
+        </div>
+        <img src="images/obrazek2.png" alt="Obrazek 1" />
+      </div>
+
+      <div class="article">
+        <div class="article-text">
+          <h3>Defeat Enemies</h3>
+          <p>Just 10 enemies. How hard can it be?</p>
+        </div>
+        <img src="images/obrazek1.png" alt="Obrazek 2" />
+      </div>
+
+      <div class="article">
+        <div class="article-text">
+          <h3>Win One Dollar</h3>
+          <p>Every win in the game is converted into $1 for charity.</p>
+        </div>
+        <img src="images/obrazek3.png" alt="Obrazek 3" />
+      </div>
+
+      <div class="btn" id="play-btn">TAKE A CHALLENGE</div>
+
+      <div class="footer">
+        I hope, you will hate my game.
+        <a href="https://x.com/AgilityHorse">Agility Horse</a>
+      </div>
+    </div>
+
+    <!-- GAME VIEW -->
+    <div id="game-screen">
+      <div id="back-btn">BACK</div>
+      <iframe
+        src="https://itch.io/embed-upload/15551688?color=333333"
+        allow="fullscreen"
+      ></iframe>
+    </div>
+
+    <script>
+      /* --- SUPABASE COUNTER --- */
+
+      const SUPABASE_URL = "https://uolddxujywmgixfsruan.supabase.co";
+      const SUPABASE_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvbGRkeHVqeXdtZ2l4ZnNydWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODg0MDgsImV4cCI6MjA3ODc2NDQwOH0._vD1dj34aSdArobcYB9cDsgG8wpHve27FYHS7pyjtgc";
+
+      async function loadCoins() {
+        try {
+          const res = await fetch(
+            `${SUPABASE_URL}/rest/v1/game_completions?select=id`,
+            {
+              method: "GET",
+              headers: {
+                apiKey: SUPABASE_KEY,
+                Authorization: `Bearer ${SUPABASE_KEY}`,
+                Prefer: "count=exact",
+              },
+            }
+          );
+
+          const total = res.headers.get("content-range")
+            ? parseInt(res.headers.get("content-range").split("/")[1])
+            : 0;
+
+          document.getElementById(
+            "counter-value"
+          ).textContent = `${total}/50 $`;
+        } catch (err) {
+          console.error("Coin fetch error", err);
+        }
+      }
+
+      loadCoins();
+
+      /* --- SHOW GAME WHEN BUTTON CLICKED --- */
+
+      const playBtn = document.getElementById("play-btn");
+      const mainContent = document.getElementById("main-content");
+      const gameScreen = document.getElementById("game-screen");
+      const backBtn = document.getElementById("back-btn");
+
+      playBtn.addEventListener("click", () => {
+        mainContent.style.display = "none";
+        gameScreen.style.display = "block";
+      });
+
+      backBtn.addEventListener("click", () => {
+        gameScreen.style.display = "none";
+        mainContent.style.display = "block";
+      });
+    </script>
+  </body>
+</html>
