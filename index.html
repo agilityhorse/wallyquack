@@ -2,7 +2,10 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
     <title>Wally Quack - Hard mode game</title>
 
     <!-- Google tag (gtag.js) -->
@@ -22,6 +25,11 @@
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
 
+      :root {
+        /* dynamiczny viewport dla wszystkich telefonów */
+        --real-vh: 100vh;
+      }
+
       body {
         margin: 0;
         font-family: "Press Start 2P", monospace;
@@ -36,11 +44,11 @@
         margin-right: auto;
       }
 
-      /* Pełny ekran w trybie gry */
+      /* Pełny ekran w trybie gry – dynamiczny VH */
       body.game-active {
         max-width: none;
         width: 100vw;
-        height: 100vh;
+        height: calc(var(--real-vh) * 100);
         padding: 0;
         overflow: hidden;
       }
@@ -114,16 +122,17 @@
         text-decoration: none;
       }
 
-      /* 🔥 RESPONSYWNY TRYB GRY */
+      /* --- RESPONSYWNY TRYB GRY --- */
       #game-screen {
         display: none;
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
-        height: 100vh;
+        height: calc(var(--real-vh) * 100);
         background: black;
         z-index: 9999;
+        overflow: hidden;
       }
 
       #game-screen iframe {
@@ -258,7 +267,7 @@
 
       loadCoins();
 
-      /* --- SHOW GAME WHEN BUTTON CLICKED --- */
+      /* --- POKAŻ GRĘ --- */
       const playBtn = document.getElementById("play-btn");
       const mainContent = document.getElementById("main-content");
       const gameScreen = document.getElementById("game-screen");
@@ -274,6 +283,22 @@
         document.body.classList.remove("game-active");
         gameScreen.style.display = "none";
         mainContent.style.display = "block";
+      });
+
+      /* --- UNIWERSALNY FIX NA TELEFONY --- */
+      function updateVH() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--real-vh", `${vh}px`);
+      }
+
+      updateVH();
+
+      window.addEventListener("resize", updateVH);
+      window.addEventListener("orientationchange", updateVH);
+
+      // Android Chrome fix (klawiatura)
+      window.addEventListener("focusout", () => {
+        setTimeout(updateVH, 50);
       });
     </script>
   </body>

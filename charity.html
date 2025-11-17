@@ -2,11 +2,18 @@
 <html lang="pl">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+    />
     <title>Wally Quack – Charity</title>
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+      :root {
+        --real-vh: 1vh; /* dynamiczny viewport */
+      }
 
       body {
         margin: 0;
@@ -18,8 +25,7 @@
         align-items: center;
         padding: 20px;
         max-width: 320px;
-        margin-left: auto;
-        margin-right: auto;
+        margin: 0 auto;
       }
 
       .logo {
@@ -42,7 +48,8 @@
       }
 
       .image-box {
-        width: 316px;
+        width: 100%;
+        max-width: 316px;
         height: 105px;
         border-radius: 10px;
         overflow: hidden;
@@ -102,10 +109,8 @@
         max-width: 320px;
         background: black;
         position: relative;
-
-        /* Dynamic height based on screen width: ratio 1:2 */
-        height: calc(100vw * 2);
-        max-height: 640px; /* stops from growing too large */
+        height: calc(var(--real-vh, 1vh) * 100 * 2); /* dynamiczna wysokość */
+        max-height: 640px;
       }
 
       #game-screen iframe {
@@ -146,7 +151,7 @@
         The game <strong>Wally Quack</strong> combines entertainment with
         helping the needy. <br /><br />
         Every "game win" is a one dollar gifted to
-        <strong>International Bird Rescue</strong>, a foundation that take care
+        <strong>International Bird Rescue</strong>, a foundation that takes care
         of ducks.
       </p>
 
@@ -215,7 +220,7 @@
       playBtn.addEventListener("click", () => {
         mainContent.style.display = "none";
         gameScreen.style.display = "block";
-        window.scrollTo(0, 0); // always scroll to top
+        window.scrollTo(0, 0);
       });
 
       backBtn.addEventListener("click", () => {
@@ -223,6 +228,17 @@
         mainContent.style.display = "block";
         window.scrollTo(0, 0);
       });
+
+      /* --- UNIVERSAL MOBILE VH FIX --- */
+      function updateVH() {
+        const vh = window.innerHeight * 0.01;
+        document.documentElement.style.setProperty("--real-vh", `${vh}px`);
+      }
+
+      updateVH();
+      window.addEventListener("resize", updateVH);
+      window.addEventListener("orientationchange", updateVH);
+      window.addEventListener("focusout", () => setTimeout(updateVH, 50));
     </script>
   </body>
 </html>
