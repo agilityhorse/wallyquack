@@ -36,6 +36,15 @@
         margin-right: auto;
       }
 
+      /* Pełny ekran w trybie gry */
+      body.game-active {
+        max-width: none;
+        width: 100vw;
+        height: 100vh;
+        padding: 0;
+        overflow: hidden;
+      }
+
       .logo {
         max-width: 200px;
         margin-bottom: 30px;
@@ -105,13 +114,16 @@
         text-decoration: none;
       }
 
-      /* GAME SCREEN */
+      /* 🔥 RESPONSYWNY TRYB GRY */
       #game-screen {
         display: none;
-        width: 320px;
-        height: 640px; /* portrait 1:2 */
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
         background: black;
-        position: relative;
+        z-index: 9999;
       }
 
       #game-screen iframe {
@@ -214,7 +226,6 @@
 
     <script>
       /* --- SUPABASE COUNTER --- */
-
       const SUPABASE_URL = "https://uolddxujywmgixfsruan.supabase.co";
       const SUPABASE_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvbGRkeHVqeXdtZ2l4ZnNydWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODg0MDgsImV4cCI6MjA3ODc2NDQwOH0._vD1dj34aSdArobcYB9cDsgG8wpHve27FYHS7pyjtgc";
@@ -248,18 +259,19 @@
       loadCoins();
 
       /* --- SHOW GAME WHEN BUTTON CLICKED --- */
-
       const playBtn = document.getElementById("play-btn");
       const mainContent = document.getElementById("main-content");
       const gameScreen = document.getElementById("game-screen");
       const backBtn = document.getElementById("back-btn");
 
       playBtn.addEventListener("click", () => {
+        document.body.classList.add("game-active");
         mainContent.style.display = "none";
         gameScreen.style.display = "block";
       });
 
       backBtn.addEventListener("click", () => {
+        document.body.classList.remove("game-active");
         gameScreen.style.display = "none";
         mainContent.style.display = "block";
       });

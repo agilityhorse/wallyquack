@@ -93,13 +93,19 @@
         text-align: center;
       }
 
-      /* GAME SCREEN */
+      /* ==============================
+         GAME SCREEN – FIXED FOR MOBILE
+         ============================== */
       #game-screen {
         display: none;
-        width: 320px;
-        height: 640px;
+        width: 100%;
+        max-width: 320px;
         background: black;
         position: relative;
+
+        /* Dynamic height based on screen width: ratio 1:2 */
+        height: calc(100vw * 2);
+        max-height: 640px; /* stops from growing too large */
       }
 
       #game-screen iframe {
@@ -200,7 +206,7 @@
 
       loadCoins();
 
-      /* SHOW GAME ON THIS PAGE */
+      /* SHOW GAME */
       const playBtn = document.getElementById("play-btn");
       const mainContent = document.getElementById("main-content");
       const gameScreen = document.getElementById("game-screen");
@@ -209,11 +215,13 @@
       playBtn.addEventListener("click", () => {
         mainContent.style.display = "none";
         gameScreen.style.display = "block";
+        window.scrollTo(0, 0); // always scroll to top
       });
 
       backBtn.addEventListener("click", () => {
         gameScreen.style.display = "none";
         mainContent.style.display = "block";
+        window.scrollTo(0, 0);
       });
     </script>
   </body>
