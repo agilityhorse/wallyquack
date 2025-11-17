@@ -4,16 +4,12 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Wally Quack – Charity</title>
 
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-
-      :root {
-        --real-vh: 1vh; /* dynamiczny viewport */
-      }
 
       body {
         margin: 0;
@@ -100,17 +96,22 @@
         text-align: center;
       }
 
-      /* ==============================
-         GAME SCREEN – FIXED FOR MOBILE
-         ============================== */
+      .footer a {
+        color: #fec24d;
+        text-decoration: none;
+      }
+
+      /* GAME SCREEN */
       #game-screen {
         display: none;
-        width: 100%;
-        max-width: 320px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100%; /* zostanie nadpisane w JS */
         background: black;
-        position: relative;
-        height: calc(var(--real-vh, 1vh) * 100 * 2); /* dynamiczna wysokość */
-        max-height: 640px;
+        z-index: 9999;
+        overflow: hidden;
       }
 
       #game-screen iframe {
@@ -151,8 +152,7 @@
         The game <strong>Wally Quack</strong> combines entertainment with
         helping the needy. <br /><br />
         Every "game win" is a one dollar gifted to
-        <strong>International Bird Rescue</strong>, a foundation that takes care
-        of ducks.
+        <strong>International Bird Rescue</strong>.
       </p>
 
       <div class="btn" id="play-btn">TAKE A CHALLENGE</div>
@@ -163,13 +163,12 @@
         I hope you will hate my game.<br />
         <a href="https://x.com/AgilityHorse" target="_blank">Agility Horse</a>
         &nbsp;•&nbsp;
-        <a href="https://www.birdrescue.org" target="_blank">
-          International Bird Rescue
-        </a>
+        <a href="https://www.birdrescue.org" target="_blank"
+          >International Bird Rescue</a
+        >
       </div>
     </div>
 
-    <!-- GAME VIEW -->
     <div id="game-screen">
       <div id="back-btn">BACK</div>
       <iframe
@@ -179,9 +178,9 @@
     </div>
 
     <script>
+      // Supabase counter
       const SUPABASE_URL = "https://uolddxujywmgixfsruan.supabase.co";
-      const SUPABASE_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvbGRkeHVqeXdtZ2l4ZnNydWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODg0MDgsImV4cCI6MjA3ODc2NDQwOH0._vD1dj34aSdArobcYB9cDsgG8wpHve27FYHS7pyjtgc";
+      const SUPABASE_KEY = "YOUR_KEY_HERE";
 
       async function loadCoins() {
         try {
@@ -196,11 +195,9 @@
               },
             }
           );
-
           const total = res.headers.get("content-range")
             ? parseInt(res.headers.get("content-range").split("/")[1])
             : 0;
-
           document.getElementById(
             "counter-value"
           ).textContent = `${total}/50 $`;
@@ -208,18 +205,25 @@
           console.error("Coin fetch error", err);
         }
       }
-
       loadCoins();
 
-      /* SHOW GAME */
+      // SHOW GAME
       const playBtn = document.getElementById("play-btn");
       const mainContent = document.getElementById("main-content");
       const gameScreen = document.getElementById("game-screen");
       const backBtn = document.getElementById("back-btn");
 
+      function setGameHeight() {
+        const vh = window.innerHeight;
+        gameScreen.style.height = vh + "px";
+        const iframe = gameScreen.querySelector("iframe");
+        iframe.style.height = vh + "px";
+      }
+
       playBtn.addEventListener("click", () => {
         mainContent.style.display = "none";
         gameScreen.style.display = "block";
+        setGameHeight();
         window.scrollTo(0, 0);
       });
 
@@ -229,16 +233,10 @@
         window.scrollTo(0, 0);
       });
 
-      /* --- UNIVERSAL MOBILE VH FIX --- */
-      function updateVH() {
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty("--real-vh", `${vh}px`);
-      }
-
-      updateVH();
-      window.addEventListener("resize", updateVH);
-      window.addEventListener("orientationchange", updateVH);
-      window.addEventListener("focusout", () => setTimeout(updateVH, 50));
+      // Dynamic VH fix
+      window.addEventListener("resize", setGameHeight);
+      window.addEventListener("orientationchange", setGameHeight);
+      window.addEventListener("focusout", () => setTimeout(setGameHeight, 50));
     </script>
   </body>
 </html>
