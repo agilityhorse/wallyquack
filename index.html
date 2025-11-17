@@ -4,31 +4,12 @@
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="width=device-width, initial-scale=1.0, maximum-scale=1.0"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
     />
     <title>Wally Quack - Hard mode game</title>
 
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-JTKD1399CY"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-      gtag("config", "G-JTKD1399CY");
-    </script>
-
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-
-      :root {
-        /* dynamiczny viewport dla wszystkich telefonów */
-        --real-vh: 100vh;
-      }
 
       body {
         margin: 0;
@@ -40,17 +21,7 @@
         align-items: center;
         padding: 20px;
         max-width: 320px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      /* Pełny ekran w trybie gry – dynamiczny VH */
-      body.game-active {
-        max-width: none;
-        width: 100vw;
-        height: calc(var(--real-vh) * 100);
-        padding: 0;
-        overflow: hidden;
+        margin: 0 auto;
       }
 
       .logo {
@@ -122,14 +93,14 @@
         text-decoration: none;
       }
 
-      /* --- RESPONSYWNY TRYB GRY --- */
+      /* GAME SCREEN */
       #game-screen {
         display: none;
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
-        height: calc(var(--real-vh) * 100);
+        height: 100%;
         background: black;
         z-index: 9999;
         overflow: hidden;
@@ -153,16 +124,6 @@
         cursor: pointer;
         z-index: 20;
       }
-
-      .read-more-link {
-        color: #fec24d !important;
-        text-decoration: none;
-        cursor: pointer;
-      }
-
-      .read-more-link:hover {
-        text-decoration: underline;
-      }
     </style>
   </head>
 
@@ -185,7 +146,6 @@
       <span id="counter-value">0/50 $</span>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div id="main-content">
       <div class="article">
         <div class="article-text">
@@ -208,7 +168,10 @@
           <h3>Win One Dollar</h3>
           <p>
             Every win in the game is converted into $1 for charity.
-            <a href="charity.html" class="read-more-link" target="_blank"
+            <a
+              href="charity.html"
+              target="_blank"
+              style="color: #fec24d; text-decoration: none"
               >Read More</a
             >
           </p>
@@ -224,7 +187,6 @@
       </div>
     </div>
 
-    <!-- GAME VIEW -->
     <div id="game-screen">
       <div id="back-btn">BACK</div>
       <iframe
@@ -234,10 +196,9 @@
     </div>
 
     <script>
-      /* --- SUPABASE COUNTER --- */
+      // Supabase counter
       const SUPABASE_URL = "https://uolddxujywmgixfsruan.supabase.co";
-      const SUPABASE_KEY =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVvbGRkeHVqeXdtZ2l4ZnNydWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjMxODg0MDgsImV4cCI6MjA3ODc2NDQwOH0._vD1dj34aSdArobcYB9cDsgG8wpHve27FYHS7pyjtgc";
+      const SUPABASE_KEY = "YOUR_KEY_HERE";
 
       async function loadCoins() {
         try {
@@ -252,11 +213,9 @@
               },
             }
           );
-
           const total = res.headers.get("content-range")
             ? parseInt(res.headers.get("content-range").split("/")[1])
             : 0;
-
           document.getElementById(
             "counter-value"
           ).textContent = `${total}/50 $`;
@@ -267,39 +226,36 @@
 
       loadCoins();
 
-      /* --- POKAŻ GRĘ --- */
+      // SHOW GAME
       const playBtn = document.getElementById("play-btn");
       const mainContent = document.getElementById("main-content");
       const gameScreen = document.getElementById("game-screen");
       const backBtn = document.getElementById("back-btn");
 
+      function setGameHeight() {
+        const vh = window.innerHeight;
+        gameScreen.style.height = vh + "px";
+        const iframe = gameScreen.querySelector("iframe");
+        iframe.style.height = vh + "px";
+      }
+
       playBtn.addEventListener("click", () => {
-        document.body.classList.add("game-active");
         mainContent.style.display = "none";
         gameScreen.style.display = "block";
+        setGameHeight();
+        window.scrollTo(0, 0);
       });
 
       backBtn.addEventListener("click", () => {
-        document.body.classList.remove("game-active");
         gameScreen.style.display = "none";
         mainContent.style.display = "block";
+        window.scrollTo(0, 0);
       });
 
-      /* --- UNIWERSALNY FIX NA TELEFONY --- */
-      function updateVH() {
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty("--real-vh", `${vh}px`);
-      }
-
-      updateVH();
-
-      window.addEventListener("resize", updateVH);
-      window.addEventListener("orientationchange", updateVH);
-
-      // Android Chrome fix (klawiatura)
-      window.addEventListener("focusout", () => {
-        setTimeout(updateVH, 50);
-      });
+      // Update height dynamically
+      window.addEventListener("resize", setGameHeight);
+      window.addEventListener("orientationchange", setGameHeight);
+      window.addEventListener("focusout", () => setTimeout(setGameHeight, 50));
     </script>
   </body>
 </html>
