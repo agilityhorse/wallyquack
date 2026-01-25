@@ -1,6 +1,21 @@
 <!doctype html>
 <html lang="pl">
   <head>
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-301MYBFZ80"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "G-301MYBFZ80");
+    </script>
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wally Quack - Take a challenge!</title>
@@ -50,6 +65,16 @@
         font-size: 12px;
         color: #e6e6e6;
       }
+
+      /* Linki w stopce */
+      .games-winners a,
+      .games-winners a:visited,
+      .games-winners a:hover,
+      .games-winners a:active,
+      .games-winners a:focus {
+        color: #e6e617;
+        text-decoration: none;
+      }
     </style>
   </head>
   <body>
@@ -57,20 +82,27 @@
       <!-- Logo -->
       <img src="images/logo1.png" alt="Logo gry" class="logo" />
 
-      <!-- Przyciski gry -->
-      <a href="game/index.html" target="_blank" class="play-button"
-        >Play Game</a
-      >
+      <!-- Przycisk gry -->
+      <a href="game/index.html" target="_blank" class="play-button">
+        Play Game
+      </a>
 
       <!-- Opis gry -->
       <div class="description">
-        <b>Wally Quack</b> – an arcade skill game. <br>How good is your sense?
-        Predict the movement and shoot down enemy.
+        <b>Wally Quack</b> – an arcade skill game.<br />
+        How good is your sense? Predict the movement and shoot down enemy.
       </div>
 
-      <!-- Games winners -->
-      <div class="games-winners">Created by <a href="x.com/agilityhorse">Agility Horse</a>
-      <br>Music by <a href="https://www.youtube.com/@Kaczorskiii">Kaczorski</div>
+      <!-- Autorzy -->
+      <div class="games-winners">
+        Created by
+        <a href="https://x.com/agilityhorse" target="_blank">Agility Horse</a>
+        <br />
+        Music by
+        <a href="https://www.youtube.com/@Kaczorskiii" target="_blank"
+          >Kaczorski</a
+        >
+      </div>
     </div>
   </body>
 </html>
