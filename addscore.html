@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dodaj swój nick</title>
+  </head>
+  <body>
+    <h2>Gratulacje! Wpisz swój nick do rankingu</h2>
+
+    <form id="scoreForm">
+      <label for="nick">Nick:</label>
+      <input type="text" id="nick" name="nick" required />
+      <input type="hidden" id="token" name="token" />
+      <button type="submit">Wyślij</button>
+    </form>
+
+    <script>
+      // --- Pobranie tokenu z URL ---
+      const params = new URLSearchParams(window.location.search);
+      const token = params.get("token");
+      if (!token) {
+        alert("Brak tokenu! Nie możesz dodać wyniku.");
+        document.getElementById("scoreForm").style.display = "none";
+      } else {
+        document.getElementById("token").value = token;
+      }
+
+      document
+        .getElementById("scoreForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const nick = document.getElementById("nick").value.trim();
+          if (!nick) return alert("Podaj nick!");
+
+          const score = parseInt(localStorage.getItem("score")) || 0; // jeśli chcesz, możesz przekazać score przez localStorage lub URL
+          const attempts = parseInt(localStorage.getItem("attempts")) || 0;
+
+          // --- Wyślij POST do Supabase ---
+          const response = await fetch(
+            "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores",
+            {
+              method: "POST",
+              headers: {
+                apikey: "TWÓJ_SUPABASE_ANON_KEY",
+                Authorization: "Bearer TWÓJ_SUPABASE_ANON_KEY",
+                "Content-Type": "application/json",
+                Prefer: "return=representation",
+              },
+              body: JSON.stringify({
+                playernick: nick,
+                score: score,
+                attempts: attempts,
+                token: token,
+              }),
+            },
+          );
+
+          const result = await response.json();
+
+          if (response.status === 201 || response.status === 200) {
+            alert("Twój wynik został zapisany!");
+            window.location.href = "https://wallyquack.com/leaderboard"; // lub otwórz w nowej karcie
+          } else {
+            alert("Błąd: " + JSON.stringify(result));
+          }
+        });
+    </script>
+  </body>
+</html>
