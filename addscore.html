@@ -13,6 +13,7 @@
       <input type="hidden" id="token" />
       <input type="hidden" id="score" />
       <input type="hidden" id="attempts" />
+      <input type="hidden" id="pipes" />
       <button type="submit">Submit</button>
     </form>
 
@@ -20,7 +21,7 @@
       const ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZreGtjcmttcGN4bHN2dXN3ZGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NDA4ODksImV4cCI6MjA4NTExNjg4OX0.kamL2caQJQ1GGNHb-ftFi1L-4urZoqLfbO6WC7zfWjI";
 
-      // --- Get token, score and attempts from URL ---
+      // --- Get token, score, attempts, and pipes from URL ---
       const params = new URLSearchParams(window.location.search);
       const token = params.get("token");
       const score = parseInt(params.get("score")) || 0;
@@ -31,12 +32,14 @@
         alert("No token provided! You cannot submit a score.");
         document.getElementById("scoreForm").style.display = "none";
       } else {
+        // Set hidden inputs
         document.getElementById("token").value = token;
         document.getElementById("score").value = score;
         document.getElementById("attempts").value = attempts;
         document.getElementById("pipes").value = pipes;
       }
 
+      // --- Submit handler ---
       document
         .getElementById("scoreForm")
         .addEventListener("submit", async (e) => {
@@ -47,6 +50,9 @@
             alert("Please enter your nickname!");
             return;
           }
+
+          // Debug log
+          console.log("Submitting:", { nick, score, attempts, pipes, token });
 
           try {
             // --- POST score ---
@@ -64,6 +70,7 @@
                   playernick: nick,
                   score: score,
                   attempts: attempts,
+                  pipes: pipes, // ← uwzględniamy pipes
                   token: token,
                 }),
               },
