@@ -17,6 +17,9 @@
     </form>
 
     <script>
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZreGtjcmttcGN4bHN2dXN3ZGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NDA4ODksImV4cCI6MjA4NTExNjg4OX0.kamL2caQJQ1GGNHb-ftFi1L-4urZoqLfbO6WC7zfWjI";
+
       // --- Pobranie tokenu i wyników z URL ---
       const params = new URLSearchParams(window.location.search);
       const token = params.get("token");
@@ -39,48 +42,57 @@
           const nick = document.getElementById("nick").value.trim();
           if (!nick) return alert("Podaj nick!");
 
-          // --- POST do Supabase ---
-          const response = await fetch(
-            "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores",
-            {
-              method: "POST",
-              headers: {
-                apikey: "TWÓJ_SUPABASE_ANON_KEY",
-                Authorization: "Bearer TWÓJ_SUPABASE_ANON_KEY",
-                "Content-Type": "application/json",
-                Prefer: "return=representation",
+          try {
+            // --- POST do Supabase scores ---
+            const response = await fetch(
+              "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores",
+              {
+                method: "POST",
+                headers: {
+                  apikey: ANON_KEY,
+                  Authorization: "Bearer " + ANON_KEY,
+                  "Content-Type": "application/json",
+                  Prefer: "return=representation",
+                },
+                body: JSON.stringify({
+                  playernick: nick,
+                  score: score,
+                  attempts: attempts,
+                  token: token,
+                }),
               },
-              body: JSON.stringify({
-                playernick: nick,
-                score: score,
-                attempts: attempts,
-                token: token,
-              }),
-            },
-          );
+            );
 
-          if (response.ok) {
+            if (!response.ok) {
+              const err = await response.json();
+              return alert(
+                "Błąd przy dodawaniu wyniku: " + JSON.stringify(err),
+              );
+            }
+
             alert("Wynik dodany pomyślnie!");
 
-            // --- Oznaczenie tokenu jako użytego ---
-            await fetch(
+            // --- PATCH token na used=true ---
+            const patchResp = await fetch(
               `https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/tokens?token=eq.${token}`,
               {
                 method: "PATCH",
                 headers: {
-                  apikey:
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZreGtjcmttcGN4bHN2dXN3ZGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NDA4ODksImV4cCI6MjA4NTExNjg4OX0.kamL2caQJQ1GGNHb-ftFi1L-4urZoqLfbO6WC7zfWjI",
-                  Authorization:
-                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZreGtjcmttcGN4bHN2dXN3ZGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NDA4ODksImV4cCI6MjA4NTExNjg4OX0.kamL2caQJQ1GGNHb-ftFi1L-4urZoqLfbO6WC7zfWjI",
+                  apikey: ANON_KEY,
+                  Authorization: "Bearer " + ANON_KEY,
                   "Content-Type": "application/json",
                   Prefer: "return=representation",
                 },
                 body: JSON.stringify({ used: true }),
               },
             );
-          } else {
-            const err = await response.json();
-            alert("Błąd przy dodawaniu wyniku: " + JSON.stringify(err));
+
+            if (!patchResp.ok) {
+              console.warn("Nie udało się oznaczyć tokenu jako użytego.");
+            }
+          } catch (err) {
+            console.error(err);
+            alert("Błąd sieci lub klucza API: sprawdź konsolę.");
           }
         });
     </script>
