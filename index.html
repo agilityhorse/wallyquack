@@ -98,7 +98,7 @@
 
       <!-- Last finishers -->
       <div class="last-finishers">
-        <h3>Last Finishers:</h3>
+        <h3>Best Pipes Bangers:</h3>
         <ul id="lastFinishersList">
           <li>Loading...</li>
         </ul>
@@ -129,8 +129,9 @@
         const listEl = document.getElementById("lastFinishersList");
 
         try {
+          // Pobieramy playernick, score, attempts i pipes, sortując po pipes malejąco
           const res = await fetch(
-            "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores?select=playernick,score,attempts&order=created_at.desc&limit=5",
+            "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores?select=playernick,score,attempts,pipes&order=pipes.desc&limit=5",
             {
               headers: {
                 apikey: ANON_KEY,
@@ -149,9 +150,10 @@
             return;
           }
 
+          // Wyświetlamy playernick, pipes i attempts
           data.forEach((item) => {
             const li = document.createElement("li");
-            li.textContent = `${item.playernick} – ${item.score} pts, ${item.attempts} attempts`;
+            li.textContent = `${item.playernick} – ${item.pipes} pipes, ${item.attempts} attempts`;
             listEl.appendChild(li);
           });
         } catch (err) {
