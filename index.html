@@ -1,21 +1,6 @@
 <!doctype html>
-<html lang="pl">
+<html lang="en">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=G-301MYBFZ80"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-301MYBFZ80");
-    </script>
-
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wally Quack - Take a challenge!</title>
@@ -64,14 +49,36 @@
       .games-winners {
         font-size: 12px;
         color: #e6e6e6;
+        margin-top: 20px;
       }
 
-      /* Linki w stopce */
-      .games-winners a,
-      .games-winners a:visited,
-      .games-winners a:hover,
-      .games-winners a:active,
-      .games-winners a:focus {
+      /* Last finishers box */
+      .last-finishers {
+        margin-top: 20px;
+        background: #222;
+        padding: 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        text-align: left;
+      }
+
+      .last-finishers h3 {
+        font-size: 14px;
+        margin: 0 0 8px 0;
+        color: #e6e617;
+      }
+
+      .last-finishers ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .last-finishers li {
+        margin-bottom: 4px;
+      }
+
+      .games-winners a {
         color: #e6e617;
         text-decoration: none;
       }
@@ -79,30 +86,32 @@
   </head>
   <body>
     <div class="container">
-      <!-- Logo -->
       <img src="images/logo1.png" alt="Logo gry" class="logo" />
+      <a href="game/index.html" target="_blank" class="play-button"
+        >Play Game</a
+      >
 
-      <!-- Przycisk gry -->
-      <a href="game/index.html" target="_blank" class="play-button">
-        Play Game
-      </a>
-
-      <!-- Opis gry -->
       <div class="description">
         <b>Wally Quack</b> – an arcade skill game.<br />
         How good is your sense? Predict the movement and shoot down enemy.
       </div>
 
-      <!-- Autorzy -->
+      <!-- Last finishers -->
+      <div class="last-finishers">
+        <h3>Last Finishers:</h3>
+        <ul id="lastFinishersList">
+          <li>Loading...</li>
+        </ul>
+      </div>
+
       <div class="games-winners">
         Created by
-        <a href="https://x.com/agilityhorse" target="_blank">Agility Horse</a>
-        <br />
+        <a href="https://x.com/agilityhorse" target="_blank">Agility Horse</a
+        ><br />
         Music by
         <a href="https://www.youtube.com/@Kaczorskiii" target="_blank"
           >Kaczorski</a
-        >
-        <br />
+        ><br />
         Presskit on
         <a
           href="https://drive.google.com/drive/folders/1xmwrFkC5pD2jlSBlvCMJRwSvNwDSEQ1u?usp=sharing"
@@ -111,5 +120,47 @@
         >
       </div>
     </div>
+
+    <script>
+      const ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZreGtjcmttcGN4bHN2dXN3ZGN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njk1NDA4ODksImV4cCI6MjA4NTExNjg4OX0.kamL2caQJQ1GGNHb-ftFi1L-4urZoqLfbO6WC7zfWjI";
+
+      async function loadLastFinishers() {
+        const listEl = document.getElementById("lastFinishersList");
+
+        try {
+          const res = await fetch(
+            "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores?select=playernick,score,attempts&order=created_at.desc&limit=5",
+            {
+              headers: {
+                apikey: ANON_KEY,
+                Authorization: "Bearer " + ANON_KEY,
+              },
+            },
+          );
+
+          if (!res.ok) throw new Error("Failed to fetch scores");
+
+          const data = await res.json();
+          listEl.innerHTML = "";
+
+          if (data.length === 0) {
+            listEl.innerHTML = "<li>No scores yet</li>";
+            return;
+          }
+
+          data.forEach((item) => {
+            const li = document.createElement("li");
+            li.textContent = `${item.playernick} – ${item.score} pts, ${item.attempts} attempts`;
+            listEl.appendChild(li);
+          });
+        } catch (err) {
+          console.error(err);
+          listEl.innerHTML = "<li>Error loading scores</li>";
+        }
+      }
+
+      loadLastFinishers();
+    </script>
   </body>
 </html>
