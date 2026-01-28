@@ -25,6 +25,7 @@
       const token = params.get("token");
       const score = parseInt(params.get("score")) || 0;
       const attempts = parseInt(params.get("attempts")) || 0;
+      const pipes = parseInt(params.get("pipes")) || 0;
 
       if (!token) {
         alert("No token provided! You cannot submit a score.");
