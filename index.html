@@ -146,7 +146,7 @@
         try {
           // Pobieramy playernick, score, attempts i pipes, sortując po pipes malejąco
           const res = await fetch(
-            "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores?select=playernick,score,attempts,pipes&order=pipes.desc&limit=5",
+            "https://fkxkcrkmpcxlsvuswdct.supabase.co/rest/v1/scores?select=playernick,score,attempts,pipes&order=pipes.desc&limit=20",
             {
               headers: {
                 apikey: ANON_KEY,
